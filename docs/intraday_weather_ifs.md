@@ -129,5 +129,6 @@ fields with the latest on-time IFS fields improves Q3 MAE from 16.98 to
 16.46 W and RMSE from 32.78 to 31.31 W against the rolling original-weather
 model. Its Q3 economic benefit is positive but small: EUR 0.23 over 91 days.
 
-See [pv_mpc_weather_refresh_evaluation.md](pv_mpc_weather_refresh_evaluation.md)
-for the audit, feature contract, validation design and economic replay.
+The audit, feature contract, validation design and economic replay are
+summarized in the [project report](project_report.md). The full exploratory
+note remains in the `archive/research-snapshot` branch.

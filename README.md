@@ -1,121 +1,186 @@
-# Energy optimization project
+# Forecasting and Optimization for Industrial Energy Management
 
-## Current data layer
+An end-to-end data science project for an industrial electricity consumer with
+flexible production load, on-site photovoltaic generation, battery storage and
+access to the German day-ahead and intraday markets.
 
-The project stores original source responses under `data/raw` and analysis-ready tables under `data/processed`.
+The project connects point and probabilistic forecasts to mixed-integer
+optimization, then evaluates every policy through the same out-of-sample 2025
+economic replay. It is designed as a portfolio-grade reference implementation:
+the market chronology, information boundaries, physical constraints and
+settlement ledger are explicit and testable.
 
-- `pv_power_15min.csv.gz`: measured KIT MPVBench active power for five PV profiles. Profile `1a` is the preliminary working profile. Its source timestamps have an **unknown timezone**.
-- `weather_actual_hourly_era5.csv.gz`: ERA5 reanalysis for an approximate Pforzheim location (48.89, 8.70), used as a historical weather estimate.
-- `weather_forecast_hourly_icon_lead_24_48.csv.gz`: archived ICON weather forecasts at fixed 24- and 48-hour lead times. This supports a fixed-lead day-ahead experiment but is not a complete forecast trajectory from one historical decision time.
-- `weather_forecast_hourly_icon_spatial_lead_24_48.csv.gz`: fixed 24- and 48-hour-lead ICON forecasts for ten representative DE-LU weather-regime locations. It is separate from the PV proxy and supports spatial weather features for day-ahead price experiments.
-- `prices_day_ahead_de_lu.csv.gz`: DE-LU day-ahead auction outcomes in EUR/MWh. The series is hourly before 1 October 2025 and 15-minute afterwards. These are settled prices, not prices known before auction clearing or intraday prices.
-- `coverage_by_month.csv`: counts for each monthly data layer.
+## Economic result
 
-The approximate Pforzheim coordinate is a modelling choice because the KIT metadata gives district/city rather than confirmed panel coordinates. It is not a claim about the actual location of PV profile 1a.
+All model choices were developed on 2024 data and frozen before the 2025
+evaluation. The final comparison contains 261 complete delivery days from
+January through September 2025.
 
-Read `docs/data_quality_report.md` before joining or modelling the data. In particular, do not join source PV timestamps to UTC weather or price timestamps until the source timezone has been confirmed or an explicit modelling assumption has been made.
+| Strategy | Realised cost | Saving vs rule-based | Rule-to-Oracle opportunity captured |
+|---|---:|---:|---:|
+| Rule-based | EUR 7,992.53 | -- | 0.0% |
+| Point day-ahead | EUR 7,547.38 | EUR 445.15 | 79.4% |
+| Stochastic day-ahead, residual-bootstrap SAA | EUR 7,535.12 | EUR 457.41 | 81.6% |
+| Point day-ahead + MPC | **EUR 7,484.07** | **EUR 508.46** | **90.7%** |
+| Day-ahead Oracle | EUR 7,431.97 | EUR 560.56 | 100.0% |
 
-## Reproduction
+![Economic strategy ladder](docs/assets/report/economic_strategy_ladder_2025.png)
 
-`scripts/collect_energy_data.py` refreshes the raw and processed data. Its forecast collection is resumable by month. `scripts/audit_energy_data.py` recreates the coverage and quality reports.
+The Rule-based policy is a spreadsheet-level lower benchmark. The Oracle is a
+non-deployable upper benchmark that allocates capacity using factual PV output
+and factual day-ahead prices. It is prohibited from speculative intraday
+trading. Stochastic day-ahead optimization and deterministic MPC are separate
+experiments, so their gains must not be added.
 
-## Training data pipeline
+These figures are evidence about the architecture and the relative value of
+its components, not a commercial savings claim. The plant, battery and
+industrial demand form a synthetic scenario around a measured PV profile, and
+public intraday indices are used in place of executable order-book quotes.
 
-The Python package under `src/energy` builds point-in-time datasets from the processed source tables. Create a Python 3.11+ environment and install the project:
+## System outline
+
+```mermaid
+flowchart LR
+    A[Point-in-time data snapshots] --> B[Feature views]
+    B --> C1[Day-ahead PV]
+    B --> C2[Day-ahead price]
+    B --> C3[MPC PV residual]
+    B --> C4[Intraday spread]
+    C1 --> D[Day-ahead MILP]
+    C2 --> D
+    C1 --> E[Scenario generators]
+    C2 --> E
+    C4 --> E
+    E --> F[Stochastic SAA / CVaR]
+    D --> G[Hourly MPC]
+    C3 --> G
+    C4 --> G
+    F --> H[Common settlement ledger]
+    G --> H
+```
+
+The physical reference case uses a 200 kWh flexible daily production target,
+a 06:00--22:00 operating window, a 10 kWp PV proxy and a 44.16 kWh usable
+battery. The optimizer models battery state of charge, charge/discharge
+efficiency, degradation, curtailment, grid import tariffs, terminal value and
+mutually exclusive operating modes.
+
+## Methods implemented
+
+- **Point forecasts:** CatBoost, persistence and autoregressive baselines,
+  direct residual correction and experimental MIMO MLP/LSTM trajectories.
+- **Uncertainty:** whole-day residual bootstrap, multi-quantile regression,
+  empirical copulas, conformal calibration and a circular seasonal kernel.
+- **Decision making:** deterministic MILP, receding-horizon MPC, sample average
+  approximation and mean-CVaR stochastic optimization.
+- **Evaluation:** frozen 2024-to-2025 forecasting tests, a common physical and
+  financial ledger, rule-based and Oracle bounds, paired block-bootstrap
+  confidence intervals and error analysis.
+- **Model lifecycle:** packaged training applications and optional MLflow
+  tracking/Model Registry registration for the deployable forecasting models.
+
+## Repository layout
+
+```text
+config/             versioned model and data configuration
+data/metadata/      small provenance and quality manifests
+docs/               report, architecture and current experiment documentation
+scripts/            data collection and audit entry points
+src/energy/data/    point-in-time data contracts and dataset builders
+src/energy/training forecast training and frozen evaluation applications
+src/energy/uncertainty/ probabilistic scenario generators
+src/energy/optimization/ physical, market and settlement models
+tests/              unit and contract tests
+```
+
+Downloaded data, materialized features, model artifacts, MLflow state and
+notebook scratch output are intentionally excluded from Git. The pre-cleanup
+research tree is retained in the `archive/research-snapshot` branch.
+
+## Quick start
+
+Python 3.11 or newer is required.
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install -e '.[dev]'
+python -m pip install --upgrade pip
+python -m pip install -e '.[dev,train]'
+pytest -q
 ```
 
-Rebuild the 2024 datasets:
+Build one leakage-safe annual training snapshot from locally collected source
+tables:
 
 ```bash
 energy build-training-data --project-root . --year 2024
 ```
 
-The outputs are stored under `data/curated`, `data/features` and `data/metadata`. The generated `energy_training.duckdb` contains materialized tables for exploration, while the Parquet files are the model-training interface. See `docs/training_datasets_2024.md` for targets, leakage rules and known limitations.
-
-Run the data-contract checks with:
+Train and optionally register the deployable PV model:
 
 ```bash
-pytest
+energy train-pv-day-ahead \
+  --project-root . \
+  --year 2024 \
+  --tracking-uri http://127.0.0.1:5000
 ```
 
-## PV model training and Model Registry
+Run the final deterministic economic replay:
 
-The deployable day-ahead PV model has a small training application with MLflow
-tracking and optional Model Registry registration. Its setup, commands and
-feature-availability contract are described in
-[docs/pv_training_and_mlflow.md](docs/pv_training_and_mlflow.md).
+```bash
+energy run-dynamic-charge-economic-backtest \
+  --project-root . \
+  --start 2025-01-01 \
+  --end 2025-09-30
+```
 
-The direct PV residual correction model for MPC is documented separately in
-[docs/pv_mpc_residual_training.md](docs/pv_mpc_residual_training.md).
+The full probabilistic experiments are deliberately separate because they
+consume precomputed forecast artifacts and solve hundreds of scenarios per
+delivery day. Their exact commands and frozen inputs are recorded in the
+linked experiment documents below.
 
-The joint multi-horizon MIMO neural residual experiments are documented in
-[docs/pv_mimo_mlp_experiment.md](docs/pv_mimo_mlp_experiment.md).
+## Data contract
 
-A separate pooled-profile experiment, which leaves the `1a` data path intact, is described in
-[docs/pv_multisite_experiment.md](docs/pv_multisite_experiment.md).
+The main sources are KIT MPVBench PV measurements, ERA5 reanalysis, archived
+ICON and ECMWF IFS weather forecasts, DE-LU day-ahead auction prices and public
+hourly intraday continuous-price indices. Every feature row records the target
+time and the time at which its source became available. Offline builders enforce
+`available_at <= as_of` to mirror the future online path.
 
-Spatial weather collection and its point-in-time contract are described in
-[docs/spatial_weather_data.md](docs/spatial_weather_data.md).
+The exact PV site coordinate and source timestamp convention are not published.
+The project therefore uses an approximate Pforzheim weather coordinate and an
+explicit `Europe/Berlin` timestamp assumption. Read the data quality report
+before replacing or extending any source.
 
-## Day-ahead price experiment
+## Current scope of MLOps
 
-The compact price-only, local-weather and spatial-weather comparison is documented in
-[docs/day_ahead_price_experiment.md](docs/day_ahead_price_experiment.md).
+The repository contains reusable training applications, MLflow configuration,
+registry hooks, deterministic experiment artifacts and a tested Python CLI.
+ClearML orchestration, the online API, containers, deployment manifests and
+production monitoring are architectural targets; they are not presented as
+already deployed components.
 
-The final frozen 2024 → 2025 evaluation of the PV, MPC and price forecasters is described in
-[docs/temporal_backtest_2025.md](docs/temporal_backtest_2025.md).
+## Documentation
 
-The hourly intraday continuous price data contract and compact MPC forecaster are described in
-[docs/intraday_price_forecasting.md](docs/intraday_price_forecasting.md).
+- [Project report](docs/project_report.md) — business setting, mathematical
+  formulation, modelling experiments and economic conclusions.
+- [Design document](docs/design_document.md) — detailed requirements and
+  modelling decisions developed during the project.
+- [Technical architecture](docs/architecture.md) — intended modular-monolith,
+  orchestration and model-registry design.
+- [Final deterministic formulation](docs/economic_backtest_v4_final_formulation.md)
+  — final battery, tariff, curtailment, Oracle and MPC semantics.
+- [Frozen temporal backtest](docs/temporal_backtest_2025.md) — forecasting
+  evaluation contract for 2024 training and 2025 testing.
+- [Quantile scenarios](docs/quantile_spread_copula_experiment.md) and
+  [residual-bootstrap economics](docs/residual_bootstrap_spread_economic_backtest_v3.md)
+  — probabilistic forecasting and stochastic optimization.
+- [Documentation index](docs/index.md) — the remaining current technical notes.
 
-The intraday experiment includes a 2024-only selection window and a frozen 2025 holdout. Its V1 champion uses a CatBoost spread correction for the next delivery hour only, then retains the known day-ahead curve for the rest of the MPC horizon.
+## Reproducibility boundary
 
-The packaged fourth forecaster and its MLflow Model Registry flow are described in [docs/intraday_price_training.md](docs/intraday_price_training.md).
-
-The reusable deterministic day-ahead, MPC and settlement-ledger core is described in [docs/deterministic_optimization.md](docs/deterministic_optimization.md).
-
-The first probabilistic component, a joint rolling-origin residual bootstrap
-for PV and day-ahead prices, is documented in
-[docs/residual_bootstrap_scenarios.md](docs/residual_bootstrap_scenarios.md).
-
-The corresponding 2025 SAA/CVaR economic replay and its cost-versus-tail-risk
-frontier are documented in
-[docs/stochastic_economic_backtest_v1.md](docs/stochastic_economic_backtest_v1.md).
-
-The conditional MultiQuantile plus empirical-copula experiment, including its
-calibration diagnosis and economic replay, is documented in
-[docs/quantile_copula_experiment.md](docs/quantile_copula_experiment.md).
-
-The conformally calibrated extension and its final comparison with residual
-bootstrap are documented in
-[docs/cqr_copula_experiment.md](docs/cqr_copula_experiment.md).
-
-The V2 three-target quantile generator for PV, day-ahead price and the
-intraday-minus-day-ahead spread is documented in
-[docs/quantile_spread_copula_experiment.md](docs/quantile_spread_copula_experiment.md).
-
-Its day-ahead-only SAA/CVaR economic replay under the final V4 battery and
-grid-tariff ledger is documented in
-[docs/quantile_spread_economic_backtest_v2.md](docs/quantile_spread_economic_backtest_v2.md).
-
-The matching three-target whole-day residual bootstrap and its 2025 economic
-comparison with the quantile approach are documented in
-[docs/residual_bootstrap_spread_economic_backtest_v3.md](docs/residual_bootstrap_spread_economic_backtest_v3.md).
-The same report includes the circular seasonal-kernel extension, its scenario
-calibration audit and the frozen 2025 SAA/CVaR replay.
-
-The first frozen 2025 economic replay, including the fixed site, rule-based
-baseline, command and result artifacts, is documented in
-[docs/economic_backtest_v1.md](docs/economic_backtest_v1.md).
-
-The final deterministic replay formulation with dynamic MPC battery control,
-PV curtailment, the strengthened rule baseline and the 2025 Pforzheim variable
-grid tariff is documented in
-[docs/economic_backtest_v4_final_formulation.md](docs/economic_backtest_v4_final_formulation.md).
-The previous numerical V3.1 result remains archived in
-[docs/economic_backtest_v3_grid_tariff.md](docs/economic_backtest_v3_grid_tariff.md).
+The small JSON manifests under `data/metadata` are versioned. Large public
+downloads and generated Parquet/CSV files are local by design and can be
+reconstructed with the collection and build commands. Final report figures are
+versioned under `docs/assets/report`; complete run outputs remain under the
+ignored local `artifacts/` directory.

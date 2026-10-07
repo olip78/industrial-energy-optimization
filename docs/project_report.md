@@ -730,5 +730,5 @@ switching between champion models and robust fallbacks.
 - [Frozen 2024-to-2025 forecast evaluation](temporal_backtest_2025.md)
 - [Final deterministic economic formulation](economic_backtest_v4_final_formulation.md)
 - [Residual-bootstrap stochastic backtest](residual_bootstrap_spread_economic_backtest_v3.md)
-- [Technical architecture draft](technical_architecture_draft.md)
+- [Technical architecture](architecture.md)
 - [Data-quality report](data_quality_report.md)
