@@ -6,7 +6,7 @@ remain available in the `archive/research-snapshot` branch.
 
 ## Core documents
 
-- [Project report](project_report.md)
+- Project report: [Markdown](project_report.md) and [PDF](project_report.pdf)
 - [Design document](design_document.md)
 - [Technical architecture](architecture.md)
 - [Final deterministic economic formulation](economic_backtest_v4_final_formulation.md)

@@ -162,8 +162,9 @@ already deployed components.
 
 ## Documentation
 
-- [Project report](docs/project_report.md) — business setting, mathematical
-  formulation, modelling experiments and economic conclusions.
+- Project report: [Markdown](docs/project_report.md) and
+  [PDF](docs/project_report.pdf) — business setting, mathematical formulation,
+  modelling experiments and economic conclusions.
 - [Design document](docs/design_document.md) — detailed requirements and
   modelling decisions developed during the project.
 - [Technical architecture](docs/architecture.md) — intended modular-monolith,
