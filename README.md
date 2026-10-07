@@ -109,6 +109,10 @@ python -m pip install -e '.[dev,train]'
 pytest -q
 ```
 
+The public CI runs all self-contained tests. Data-contract suites that inspect
+generated Parquet datasets run automatically when those local files are
+present and are reported as skipped in a clean GitHub checkout.
+
 Build one leakage-safe annual training snapshot from locally collected source
 tables:
 

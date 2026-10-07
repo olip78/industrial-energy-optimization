@@ -21,6 +21,10 @@ MANIFEST = DATA_ROOT / "metadata" / "day_ahead_price_spatial_v1_manifest.json"
 class DayAheadPriceSpatialDatasetTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
+        if not DATASET.exists():
+            raise unittest.SkipTest(
+                "requires the locally generated day-ahead price spatial dataset"
+            )
         cls.frame = pd.read_parquet(DATASET)
         cls.manifest = json.loads(MANIFEST.read_text())
 

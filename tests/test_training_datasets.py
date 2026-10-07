@@ -20,18 +20,33 @@ YEAR = 2024
 class TrainingDatasetsTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.da_pv = pd.read_parquet(
-            DATA_ROOT / "features" / "day_ahead_pv" / f"day_ahead_pv_{YEAR}.parquet"
-        )
-        cls.da_price = pd.read_parquet(
-            DATA_ROOT / "features" / "day_ahead_price" / f"day_ahead_price_{YEAR}.parquet"
-        )
-        cls.oracle_pv = pd.read_parquet(
-            DATA_ROOT / "features" / "oracle_pv" / f"oracle_pv_{YEAR}.parquet"
-        )
-        cls.mpc_pv = pd.read_parquet(
-            DATA_ROOT / "features" / "mpc_pv" / f"mpc_pv_{YEAR}.parquet"
-        )
+        paths = {
+            "da_pv": DATA_ROOT
+            / "features"
+            / "day_ahead_pv"
+            / f"day_ahead_pv_{YEAR}.parquet",
+            "da_price": DATA_ROOT
+            / "features"
+            / "day_ahead_price"
+            / f"day_ahead_price_{YEAR}.parquet",
+            "oracle_pv": DATA_ROOT
+            / "features"
+            / "oracle_pv"
+            / f"oracle_pv_{YEAR}.parquet",
+            "mpc_pv": DATA_ROOT
+            / "features"
+            / "mpc_pv"
+            / f"mpc_pv_{YEAR}.parquet",
+        }
+        missing = [str(path) for path in paths.values() if not path.exists()]
+        if missing:
+            raise unittest.SkipTest(
+                "requires locally generated training datasets: " + ", ".join(missing)
+            )
+        cls.da_pv = pd.read_parquet(paths["da_pv"])
+        cls.da_price = pd.read_parquet(paths["da_price"])
+        cls.oracle_pv = pd.read_parquet(paths["oracle_pv"])
+        cls.mpc_pv = pd.read_parquet(paths["mpc_pv"])
 
     def test_all_targets_are_in_requested_year(self) -> None:
         for frame in (self.da_pv, self.oracle_pv, self.da_price, self.mpc_pv):
