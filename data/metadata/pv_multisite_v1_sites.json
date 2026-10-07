@@ -1,0 +1,48 @@
+{
+  "dataset_name": "pv_multisite_v1",
+  "sites": [
+    {
+      "site_id": "1a",
+      "pv_source_profile": "1a",
+      "include_in_multisite_v1": true,
+      "observed_max_power_w": 492.1675,
+      "observed_p995_power_w": 432.94450000000046,
+      "installed_power": "600 W microinverter documented only for profile 1a; unknown for other profiles",
+      "coordinates": {
+        "latitude": 48.89,
+        "longitude": 8.7,
+        "timezone": "Europe/Berlin",
+        "provenance": "Shared weather/solar proxy; confirmed panel coordinates unavailable"
+      }
+    },
+    {
+      "site_id": "2a",
+      "pv_source_profile": "2a",
+      "include_in_multisite_v1": true,
+      "observed_max_power_w": 552.735,
+      "observed_p995_power_w": 458.43728333333394,
+      "installed_power": "not published in the available source metadata",
+      "coordinates": {
+        "latitude": 48.89,
+        "longitude": 8.7,
+        "timezone": "Europe/Berlin",
+        "provenance": "Shared weather/solar proxy; confirmed panel coordinates unavailable"
+      }
+    },
+    {
+      "site_id": "2b",
+      "pv_source_profile": "2b",
+      "include_in_multisite_v1": true,
+      "observed_max_power_w": 352.7033333333333,
+      "observed_p995_power_w": 278.28720000000004,
+      "installed_power": "not published in the available source metadata",
+      "coordinates": {
+        "latitude": 48.89,
+        "longitude": 8.7,
+        "timezone": "Europe/Berlin",
+        "provenance": "Shared weather/solar proxy; confirmed panel coordinates unavailable"
+      }
+    }
+  ],
+  "note": "Observed peak statistics are descriptive metadata, not model features. Do not treat them as confirmed installed power."
+}

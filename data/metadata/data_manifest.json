@@ -1,0 +1,36 @@
+{
+  "created_at_utc": "2026-09-18T12:52:46Z",
+  "location": {
+    "latitude": 48.89,
+    "longitude": 8.7,
+    "status": "approximate point near Pforzheim, not verified PV coordinates"
+  },
+  "time_window": {
+    "pv": "2024-01-01 through 2025-12-31",
+    "actual_weather": "2024-01-01 through 2025-12-31",
+    "prices": "2024-01-01 through 2025-12-31",
+    "forecasts": "2024-01-01 through 2025-12-31"
+  },
+  "forecast": {
+    "provider": "Open-Meteo",
+    "model": "DWD ICON seamless",
+    "format": "previous-runs fixed lead times",
+    "lead_hours": [
+      24,
+      48
+    ],
+    "historical_status": "forecast values indexed by valid time and lead, not full individual forecast runs"
+  },
+  "sources": {
+    "pv": "https://github.com/KIT-IAI/MPVBench",
+    "actual_weather": "https://archive-api.open-meteo.com/v1/archive",
+    "forecast_weather": "https://single-runs-api.open-meteo.com/v1/forecast",
+    "prices": "https://api.energy-charts.info/price"
+  },
+  "pv_source_time": {
+    "original_timezone": "unknown",
+    "working_timezone": "Europe/Berlin (provisional)",
+    "reason": "PV morning onset aligns with local solar-radiation onset for profiles 1a, 2a and 2b; 2a/2b also favor Berlin in weather-fit metrics.",
+    "dst_policy": "retain source_time; valid_time_utc is blank for ambiguous/nonexistent DST-transition rows"
+  }
+}

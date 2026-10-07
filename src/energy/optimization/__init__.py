@@ -1,0 +1,128 @@
+"""Deterministic economic decision core for the energy-control project."""
+
+from energy.optimization.deterministic import (
+    BatteryParameters,
+    DayAheadPlan,
+    EconomicLedger,
+    MpcPlan,
+    OraclePlan,
+    battery_full_cost_eur_per_kwh,
+    evaluate_actual_day,
+    solve_day_ahead,
+    solve_mpc,
+    solve_oracle_perfect_information,
+)
+from energy.optimization.rule_based import (
+    RuleBasedDayPlan,
+    RuleBasedPriceShape,
+    build_rule_based_plan,
+    fit_rule_based_price_shape,
+)
+from energy.optimization.replay import (
+    DayReplayInputs,
+    DayAheadOnlyReplayResult,
+    DeterministicReplayResult,
+    OracleReplayResult,
+    RuleBasedReplayResult,
+    replay_deterministic_day,
+    replay_day_ahead_only_day,
+    replay_oracle_day,
+    replay_rule_based_day,
+)
+from energy.optimization.scenario import ReferenceScenario, V1_REFERENCE_SCENARIO
+from energy.optimization.stochastic import (
+    StochasticDayAheadPlan,
+    solve_stochastic_day_ahead,
+)
+from energy.optimization.dynamic_battery import (
+    DynamicBatteryParameters,
+    DynamicEconomicLedger,
+    DynamicOraclePlan,
+    DynamicSchedule,
+    battery_reference_cost_eur_per_kwh,
+    battery_reference_cost_components_eur_per_kwh,
+    evaluate_dynamic_actual_day,
+    solve_dynamic_oracle,
+    solve_dynamic_schedule,
+    terminal_soc_value_eur_per_kwh,
+)
+from energy.optimization.grid_tariff import (
+    GridTariffParameters,
+    NO_GRID_TARIFF,
+    PFORZHEIM_SLP_2025_GRID_TARIFF,
+)
+from energy.optimization.dynamic_replay import (
+    DynamicDayAheadOnlyReplayResult,
+    DynamicDeterministicReplayResult,
+    DynamicOracleReplayResult,
+    DynamicRulePlan,
+    DynamicRuleReplayResult,
+    replay_dynamic_day_ahead_only_day,
+    replay_dynamic_deterministic_day,
+    replay_dynamic_oracle_day,
+    replay_dynamic_rule_based_day,
+)
+from energy.optimization.dynamic_stochastic import (
+    DynamicStochasticDayAheadPlan,
+    solve_dynamic_stochastic_day_ahead,
+)
+from energy.optimization.dynamic_stochastic_spread import (
+    DynamicSpreadStochasticPlan,
+    solve_dynamic_stochastic_spread_day_ahead,
+)
+
+__all__ = [
+    "BatteryParameters",
+    "DayAheadPlan",
+    "EconomicLedger",
+    "MpcPlan",
+    "OraclePlan",
+    "battery_full_cost_eur_per_kwh",
+    "evaluate_actual_day",
+    "solve_day_ahead",
+    "solve_mpc",
+    "solve_oracle_perfect_information",
+    "ReferenceScenario",
+    "V1_REFERENCE_SCENARIO",
+    "RuleBasedDayPlan",
+    "RuleBasedPriceShape",
+    "build_rule_based_plan",
+    "fit_rule_based_price_shape",
+    "DayReplayInputs",
+    "DayAheadOnlyReplayResult",
+    "DeterministicReplayResult",
+    "OracleReplayResult",
+    "RuleBasedReplayResult",
+    "replay_deterministic_day",
+    "replay_day_ahead_only_day",
+    "replay_oracle_day",
+    "replay_rule_based_day",
+    "StochasticDayAheadPlan",
+    "solve_stochastic_day_ahead",
+    "DynamicBatteryParameters",
+    "DynamicEconomicLedger",
+    "DynamicOraclePlan",
+    "DynamicSchedule",
+    "battery_reference_cost_eur_per_kwh",
+    "battery_reference_cost_components_eur_per_kwh",
+    "evaluate_dynamic_actual_day",
+    "solve_dynamic_oracle",
+    "solve_dynamic_schedule",
+    "terminal_soc_value_eur_per_kwh",
+    "GridTariffParameters",
+    "NO_GRID_TARIFF",
+    "PFORZHEIM_SLP_2025_GRID_TARIFF",
+    "DynamicDayAheadOnlyReplayResult",
+    "DynamicDeterministicReplayResult",
+    "DynamicOracleReplayResult",
+    "DynamicRulePlan",
+    "DynamicRuleReplayResult",
+    "replay_dynamic_day_ahead_only_day",
+    "replay_dynamic_deterministic_day",
+    "replay_dynamic_oracle_day",
+    "replay_dynamic_rule_based_day",
+    "DynamicStochasticDayAheadPlan",
+    "solve_dynamic_stochastic_day_ahead",
+    "DynamicSpreadStochasticPlan",
+    "solve_dynamic_stochastic_spread_day_ahead",
+]

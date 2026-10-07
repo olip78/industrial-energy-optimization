@@ -1,0 +1,107 @@
+{
+  "1a": {
+    "Berlin": {
+      "timezone": "Europe/Berlin",
+      "matched_daylight_hours": 8454,
+      "solar_correlation": 0.5273398682866093,
+      "weather_model_r2": 0.31175885545438853,
+      "weather_model_rmse_w": 98.80046641146633,
+      "pv_over_20w_with_ghi_at_most_10w": 0,
+      "clear_day_count": 73,
+      "median_pv_start_minus_weather_start_hours": 0.0,
+      "median_pv_end_minus_weather_end_hours": -3.0
+    },
+    "London": {
+      "timezone": "Europe/London",
+      "matched_daylight_hours": 8454,
+      "solar_correlation": 0.6934484938540268,
+      "weather_model_r2": 0.5049019440686435,
+      "weather_model_rmse_w": 84.02553340118313,
+      "pv_over_20w_with_ghi_at_most_10w": 0,
+      "clear_day_count": 73,
+      "median_pv_start_minus_weather_start_hours": 1.0,
+      "median_pv_end_minus_weather_end_hours": -2.0
+    },
+    "UTC_control": {
+      "timezone": "UTC",
+      "matched_daylight_hours": 8454,
+      "solar_correlation": 0.7495861522172869,
+      "weather_model_r2": 0.5758787494700043,
+      "weather_model_rmse_w": 78.18963141693114,
+      "pv_over_20w_with_ghi_at_most_10w": 0,
+      "clear_day_count": 73,
+      "median_pv_start_minus_weather_start_hours": 2.0,
+      "median_pv_end_minus_weather_end_hours": -1.0
+    }
+  },
+  "2a": {
+    "Berlin": {
+      "timezone": "Europe/Berlin",
+      "matched_daylight_hours": 8454,
+      "solar_correlation": 0.4983988508138625,
+      "weather_model_r2": 0.3460437970981497,
+      "weather_model_rmse_w": 87.97220304835936,
+      "pv_over_20w_with_ghi_at_most_10w": 0,
+      "clear_day_count": 73,
+      "median_pv_start_minus_weather_start_hours": 0.0,
+      "median_pv_end_minus_weather_end_hours": -1.0
+    },
+    "London": {
+      "timezone": "Europe/London",
+      "matched_daylight_hours": 8454,
+      "solar_correlation": 0.30921897127026987,
+      "weather_model_r2": 0.25077072563632796,
+      "weather_model_rmse_w": 94.97857420535092,
+      "pv_over_20w_with_ghi_at_most_10w": 0,
+      "clear_day_count": 73,
+      "median_pv_start_minus_weather_start_hours": 1.0,
+      "median_pv_end_minus_weather_end_hours": 0.0
+    },
+    "UTC_control": {
+      "timezone": "UTC",
+      "matched_daylight_hours": 8454,
+      "solar_correlation": 0.16760464273354397,
+      "weather_model_r2": 0.2048962565908402,
+      "weather_model_rmse_w": 94.92365471948058,
+      "pv_over_20w_with_ghi_at_most_10w": 0,
+      "clear_day_count": 73,
+      "median_pv_start_minus_weather_start_hours": 2.0,
+      "median_pv_end_minus_weather_end_hours": 1.0
+    }
+  },
+  "2b": {
+    "Berlin": {
+      "timezone": "Europe/Berlin",
+      "matched_daylight_hours": 8454,
+      "solar_correlation": 0.6773326170159522,
+      "weather_model_r2": 0.48161408262856764,
+      "weather_model_rmse_w": 44.51463929794993,
+      "pv_over_20w_with_ghi_at_most_10w": 0,
+      "clear_day_count": 73,
+      "median_pv_start_minus_weather_start_hours": 0.0,
+      "median_pv_end_minus_weather_end_hours": -2.0
+    },
+    "London": {
+      "timezone": "Europe/London",
+      "matched_daylight_hours": 8454,
+      "solar_correlation": 0.5368068924891789,
+      "weather_model_r2": 0.3262361635159766,
+      "weather_model_rmse_w": 51.531893715687325,
+      "pv_over_20w_with_ghi_at_most_10w": 0,
+      "clear_day_count": 73,
+      "median_pv_start_minus_weather_start_hours": 1.0,
+      "median_pv_end_minus_weather_end_hours": -1.0
+    },
+    "UTC_control": {
+      "timezone": "UTC",
+      "matched_daylight_hours": 8454,
+      "solar_correlation": 0.3829274789616513,
+      "weather_model_r2": 0.2098241856453158,
+      "weather_model_rmse_w": 56.785535716719295,
+      "pv_over_20w_with_ghi_at_most_10w": 0,
+      "clear_day_count": 73,
+      "median_pv_start_minus_weather_start_hours": 2.0,
+      "median_pv_end_minus_weather_end_hours": 0.0
+    }
+  }
+}

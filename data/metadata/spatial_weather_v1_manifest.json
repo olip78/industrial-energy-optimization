@@ -1,0 +1,325 @@
+{
+  "data_version": "spatial-weather-v1",
+  "created_at_utc": "2026-09-30T13:27:07Z",
+  "source": {
+    "provider": "Open-Meteo",
+    "endpoint": "https://previous-runs-api.open-meteo.com/v1/forecast",
+    "model": "icon_seamless",
+    "mode": "previous-runs archive"
+  },
+  "time_window": {
+    "start": "2024-01-01",
+    "end": "2025-12-31"
+  },
+  "locations": {
+    "version": "spatial-weather-locations-v1",
+    "purpose": "Representative weather-regime points for DE-LU day-ahead price forecasting; these are modelling coordinates, not weather stations or renewable sites.",
+    "locations": [
+      {
+        "location_id": "north_sea_offshore",
+        "latitude": 54.4,
+        "longitude": 7.7,
+        "role": "offshore_wind",
+        "cell_selection": "sea"
+      },
+      {
+        "location_id": "schleswig_holstein",
+        "latitude": 54.2,
+        "longitude": 9.7,
+        "role": "northern_onshore_wind",
+        "cell_selection": "land"
+      },
+      {
+        "location_id": "lower_saxony",
+        "latitude": 52.7,
+        "longitude": 8.4,
+        "role": "northwest_onshore_wind",
+        "cell_selection": "land"
+      },
+      {
+        "location_id": "mecklenburg",
+        "latitude": 53.7,
+        "longitude": 12.6,
+        "role": "northeast_wind",
+        "cell_selection": "land"
+      },
+      {
+        "location_id": "ruhr_west",
+        "latitude": 51.5,
+        "longitude": 7.1,
+        "role": "western_load_and_weather",
+        "cell_selection": "land"
+      },
+      {
+        "location_id": "central_germany",
+        "latitude": 50.6,
+        "longitude": 9.2,
+        "role": "central_weather",
+        "cell_selection": "land"
+      },
+      {
+        "location_id": "brandenburg",
+        "latitude": 52.4,
+        "longitude": 13.8,
+        "role": "eastern_wind_and_solar",
+        "cell_selection": "land"
+      },
+      {
+        "location_id": "saxony",
+        "latitude": 51.1,
+        "longitude": 13.7,
+        "role": "southeastern_weather",
+        "cell_selection": "land"
+      },
+      {
+        "location_id": "bavaria",
+        "latitude": 48.8,
+        "longitude": 11.6,
+        "role": "southern_solar_and_load",
+        "cell_selection": "land"
+      },
+      {
+        "location_id": "pforzheim_proxy",
+        "latitude": 48.89,
+        "longitude": 8.7,
+        "role": "existing_pv_weather_proxy",
+        "cell_selection": "land"
+      }
+    ]
+  },
+  "variables": [
+    "temperature_2m",
+    "shortwave_radiation",
+    "direct_radiation",
+    "diffuse_radiation",
+    "wind_speed_120m",
+    "cloud_cover"
+  ],
+  "lead_hours": [
+    24,
+    48
+  ],
+  "availability_contract": {
+    "weather_fcst24_available_at_utc": "valid_time_utc - 24 hours",
+    "weather_fcst48_available_at_utc": "valid_time_utc - 48 hours",
+    "selection_rule": "A consumer must require available_at_utc <= its own as_of_utc.",
+    "not_included": "Realised weather, ERA5 reanalysis, and a full per-run forecast trajectory."
+  },
+  "processed_file": {
+    "path": "data/processed/weather_forecast_hourly_icon_spatial_lead_24_48.csv.gz",
+    "sha256": "c371fb70037e4e4d710051fb9737188e9fe040907632d43ca16f099866254c40",
+    "rows": 175440
+  },
+  "quality": {
+    "per_location": {
+      "north_sea_offshore": {
+        "rows": 17544,
+        "first_valid_time_utc": "2024-01-01T00:00:00Z",
+        "last_valid_time_utc": "2025-12-31T23:00:00Z",
+        "duplicate_location_time_rows": 0,
+        "null_values": {
+          "weather_fcst24_temperature_2m": 444,
+          "weather_fcst24_shortwave_radiation": 444,
+          "weather_fcst24_direct_radiation": 444,
+          "weather_fcst24_diffuse_radiation": 444,
+          "weather_fcst24_wind_speed_120m": 1113,
+          "weather_fcst24_cloud_cover": 444,
+          "weather_fcst48_temperature_2m": 468,
+          "weather_fcst48_shortwave_radiation": 468,
+          "weather_fcst48_direct_radiation": 468,
+          "weather_fcst48_diffuse_radiation": 468,
+          "weather_fcst48_wind_speed_120m": 1140,
+          "weather_fcst48_cloud_cover": 468
+        }
+      },
+      "schleswig_holstein": {
+        "rows": 17544,
+        "first_valid_time_utc": "2024-01-01T00:00:00Z",
+        "last_valid_time_utc": "2025-12-31T23:00:00Z",
+        "duplicate_location_time_rows": 0,
+        "null_values": {
+          "weather_fcst24_temperature_2m": 444,
+          "weather_fcst24_shortwave_radiation": 444,
+          "weather_fcst24_direct_radiation": 444,
+          "weather_fcst24_diffuse_radiation": 444,
+          "weather_fcst24_wind_speed_120m": 1113,
+          "weather_fcst24_cloud_cover": 444,
+          "weather_fcst48_temperature_2m": 468,
+          "weather_fcst48_shortwave_radiation": 468,
+          "weather_fcst48_direct_radiation": 468,
+          "weather_fcst48_diffuse_radiation": 468,
+          "weather_fcst48_wind_speed_120m": 1140,
+          "weather_fcst48_cloud_cover": 468
+        }
+      },
+      "lower_saxony": {
+        "rows": 17544,
+        "first_valid_time_utc": "2024-01-01T00:00:00Z",
+        "last_valid_time_utc": "2025-12-31T23:00:00Z",
+        "duplicate_location_time_rows": 0,
+        "null_values": {
+          "weather_fcst24_temperature_2m": 444,
+          "weather_fcst24_shortwave_radiation": 444,
+          "weather_fcst24_direct_radiation": 444,
+          "weather_fcst24_diffuse_radiation": 444,
+          "weather_fcst24_wind_speed_120m": 1113,
+          "weather_fcst24_cloud_cover": 444,
+          "weather_fcst48_temperature_2m": 468,
+          "weather_fcst48_shortwave_radiation": 468,
+          "weather_fcst48_direct_radiation": 468,
+          "weather_fcst48_diffuse_radiation": 468,
+          "weather_fcst48_wind_speed_120m": 1140,
+          "weather_fcst48_cloud_cover": 468
+        }
+      },
+      "mecklenburg": {
+        "rows": 17544,
+        "first_valid_time_utc": "2024-01-01T00:00:00Z",
+        "last_valid_time_utc": "2025-12-31T23:00:00Z",
+        "duplicate_location_time_rows": 0,
+        "null_values": {
+          "weather_fcst24_temperature_2m": 444,
+          "weather_fcst24_shortwave_radiation": 444,
+          "weather_fcst24_direct_radiation": 444,
+          "weather_fcst24_diffuse_radiation": 444,
+          "weather_fcst24_wind_speed_120m": 1113,
+          "weather_fcst24_cloud_cover": 444,
+          "weather_fcst48_temperature_2m": 468,
+          "weather_fcst48_shortwave_radiation": 468,
+          "weather_fcst48_direct_radiation": 468,
+          "weather_fcst48_diffuse_radiation": 468,
+          "weather_fcst48_wind_speed_120m": 1140,
+          "weather_fcst48_cloud_cover": 468
+        }
+      },
+      "ruhr_west": {
+        "rows": 17544,
+        "first_valid_time_utc": "2024-01-01T00:00:00Z",
+        "last_valid_time_utc": "2025-12-31T23:00:00Z",
+        "duplicate_location_time_rows": 0,
+        "null_values": {
+          "weather_fcst24_temperature_2m": 444,
+          "weather_fcst24_shortwave_radiation": 444,
+          "weather_fcst24_direct_radiation": 444,
+          "weather_fcst24_diffuse_radiation": 444,
+          "weather_fcst24_wind_speed_120m": 1113,
+          "weather_fcst24_cloud_cover": 444,
+          "weather_fcst48_temperature_2m": 468,
+          "weather_fcst48_shortwave_radiation": 468,
+          "weather_fcst48_direct_radiation": 468,
+          "weather_fcst48_diffuse_radiation": 468,
+          "weather_fcst48_wind_speed_120m": 1140,
+          "weather_fcst48_cloud_cover": 468
+        }
+      },
+      "central_germany": {
+        "rows": 17544,
+        "first_valid_time_utc": "2024-01-01T00:00:00Z",
+        "last_valid_time_utc": "2025-12-31T23:00:00Z",
+        "duplicate_location_time_rows": 0,
+        "null_values": {
+          "weather_fcst24_temperature_2m": 444,
+          "weather_fcst24_shortwave_radiation": 444,
+          "weather_fcst24_direct_radiation": 444,
+          "weather_fcst24_diffuse_radiation": 444,
+          "weather_fcst24_wind_speed_120m": 1113,
+          "weather_fcst24_cloud_cover": 444,
+          "weather_fcst48_temperature_2m": 468,
+          "weather_fcst48_shortwave_radiation": 468,
+          "weather_fcst48_direct_radiation": 468,
+          "weather_fcst48_diffuse_radiation": 468,
+          "weather_fcst48_wind_speed_120m": 1140,
+          "weather_fcst48_cloud_cover": 468
+        }
+      },
+      "brandenburg": {
+        "rows": 17544,
+        "first_valid_time_utc": "2024-01-01T00:00:00Z",
+        "last_valid_time_utc": "2025-12-31T23:00:00Z",
+        "duplicate_location_time_rows": 0,
+        "null_values": {
+          "weather_fcst24_temperature_2m": 444,
+          "weather_fcst24_shortwave_radiation": 444,
+          "weather_fcst24_direct_radiation": 444,
+          "weather_fcst24_diffuse_radiation": 444,
+          "weather_fcst24_wind_speed_120m": 1113,
+          "weather_fcst24_cloud_cover": 444,
+          "weather_fcst48_temperature_2m": 468,
+          "weather_fcst48_shortwave_radiation": 468,
+          "weather_fcst48_direct_radiation": 468,
+          "weather_fcst48_diffuse_radiation": 468,
+          "weather_fcst48_wind_speed_120m": 1140,
+          "weather_fcst48_cloud_cover": 468
+        }
+      },
+      "saxony": {
+        "rows": 17544,
+        "first_valid_time_utc": "2024-01-01T00:00:00Z",
+        "last_valid_time_utc": "2025-12-31T23:00:00Z",
+        "duplicate_location_time_rows": 0,
+        "null_values": {
+          "weather_fcst24_temperature_2m": 444,
+          "weather_fcst24_shortwave_radiation": 444,
+          "weather_fcst24_direct_radiation": 444,
+          "weather_fcst24_diffuse_radiation": 444,
+          "weather_fcst24_wind_speed_120m": 1113,
+          "weather_fcst24_cloud_cover": 444,
+          "weather_fcst48_temperature_2m": 468,
+          "weather_fcst48_shortwave_radiation": 468,
+          "weather_fcst48_direct_radiation": 468,
+          "weather_fcst48_diffuse_radiation": 468,
+          "weather_fcst48_wind_speed_120m": 1140,
+          "weather_fcst48_cloud_cover": 468
+        }
+      },
+      "bavaria": {
+        "rows": 17544,
+        "first_valid_time_utc": "2024-01-01T00:00:00Z",
+        "last_valid_time_utc": "2025-12-31T23:00:00Z",
+        "duplicate_location_time_rows": 0,
+        "null_values": {
+          "weather_fcst24_temperature_2m": 444,
+          "weather_fcst24_shortwave_radiation": 444,
+          "weather_fcst24_direct_radiation": 444,
+          "weather_fcst24_diffuse_radiation": 444,
+          "weather_fcst24_wind_speed_120m": 1113,
+          "weather_fcst24_cloud_cover": 444,
+          "weather_fcst48_temperature_2m": 468,
+          "weather_fcst48_shortwave_radiation": 468,
+          "weather_fcst48_direct_radiation": 468,
+          "weather_fcst48_diffuse_radiation": 468,
+          "weather_fcst48_wind_speed_120m": 1140,
+          "weather_fcst48_cloud_cover": 468
+        }
+      },
+      "pforzheim_proxy": {
+        "rows": 17544,
+        "first_valid_time_utc": "2024-01-01T00:00:00Z",
+        "last_valid_time_utc": "2025-12-31T23:00:00Z",
+        "duplicate_location_time_rows": 0,
+        "null_values": {
+          "weather_fcst24_temperature_2m": 444,
+          "weather_fcst24_shortwave_radiation": 444,
+          "weather_fcst24_direct_radiation": 444,
+          "weather_fcst24_diffuse_radiation": 444,
+          "weather_fcst24_wind_speed_120m": 1113,
+          "weather_fcst24_cloud_cover": 444,
+          "weather_fcst48_temperature_2m": 468,
+          "weather_fcst48_shortwave_radiation": 468,
+          "weather_fcst48_direct_radiation": 468,
+          "weather_fcst48_diffuse_radiation": 468,
+          "weather_fcst48_wind_speed_120m": 1140,
+          "weather_fcst48_cloud_cover": 468
+        }
+      }
+    },
+    "day_ahead_feature_availability": {
+      "as_of_convention": "D-1 11:00 Europe/Berlin",
+      "row_availability_rate": 0.9358185134518924,
+      "delivery_days_total": 732,
+      "complete_delivery_days": 684,
+      "first_complete_delivery_day": "2024-02-18",
+      "last_incomplete_delivery_day": "2024-02-17"
+    }
+  }
+}

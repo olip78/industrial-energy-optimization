@@ -1,0 +1,16 @@
+{
+  "version": "spatial-weather-locations-v1",
+  "purpose": "Representative weather-regime points for DE-LU day-ahead price forecasting; these are modelling coordinates, not weather stations or renewable sites.",
+  "locations": [
+    {"location_id": "north_sea_offshore", "latitude": 54.40, "longitude": 7.70, "role": "offshore_wind", "cell_selection": "sea"},
+    {"location_id": "schleswig_holstein", "latitude": 54.20, "longitude": 9.70, "role": "northern_onshore_wind", "cell_selection": "land"},
+    {"location_id": "lower_saxony", "latitude": 52.70, "longitude": 8.40, "role": "northwest_onshore_wind", "cell_selection": "land"},
+    {"location_id": "mecklenburg", "latitude": 53.70, "longitude": 12.60, "role": "northeast_wind", "cell_selection": "land"},
+    {"location_id": "ruhr_west", "latitude": 51.50, "longitude": 7.10, "role": "western_load_and_weather", "cell_selection": "land"},
+    {"location_id": "central_germany", "latitude": 50.60, "longitude": 9.20, "role": "central_weather", "cell_selection": "land"},
+    {"location_id": "brandenburg", "latitude": 52.40, "longitude": 13.80, "role": "eastern_wind_and_solar", "cell_selection": "land"},
+    {"location_id": "saxony", "latitude": 51.10, "longitude": 13.70, "role": "southeastern_weather", "cell_selection": "land"},
+    {"location_id": "bavaria", "latitude": 48.80, "longitude": 11.60, "role": "southern_solar_and_load", "cell_selection": "land"},
+    {"location_id": "pforzheim_proxy", "latitude": 48.89, "longitude": 8.70, "role": "existing_pv_weather_proxy", "cell_selection": "land"}
+  ]
+}

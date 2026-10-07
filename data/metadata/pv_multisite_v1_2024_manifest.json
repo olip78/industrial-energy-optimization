@@ -1,0 +1,67 @@
+{
+  "dataset_name": "pv_multisite_v1",
+  "year": 2024,
+  "source_day_ahead_table": "data/features/day_ahead_pv/day_ahead_pv_2024.parquet",
+  "source_pv_table": "data/processed/pv_power_15min_assumed_europe_berlin.csv.gz",
+  "profiles": [
+    "1a",
+    "2a",
+    "2b"
+  ],
+  "excluded_profiles": {
+    "1b": "147 all-zero days in the available period",
+    "1c": "313 all-zero days in the available period"
+  },
+  "weather_and_solar_proxy": {
+    "latitude": 48.89,
+    "longitude": 8.7,
+    "timezone": "Europe/Berlin",
+    "provenance": "Shared weather/solar proxy; confirmed panel coordinates unavailable"
+  },
+  "site_identifier_encoding": "one-hot numeric columns site_id_<profile>",
+  "target_units": "W",
+  "rows_by_site": {
+    "1a": 8277,
+    "2a": 8277,
+    "2b": 8277
+  },
+  "columns": [
+    "as_of_utc",
+    "valid_time_utc",
+    "valid_time_local",
+    "delivery_date_local",
+    "horizon_hours",
+    "hour_local",
+    "day_of_week",
+    "day_of_year",
+    "month",
+    "is_weekend",
+    "hour_sin",
+    "hour_cos",
+    "day_of_year_sin",
+    "day_of_year_cos",
+    "feature_version",
+    "data_snapshot_id",
+    "week_index",
+    "weather_forecast_temperature_2m",
+    "weather_forecast_shortwave_radiation",
+    "weather_forecast_direct_radiation",
+    "weather_forecast_diffuse_radiation",
+    "weather_forecast_wind_speed_10m",
+    "weather_forecast_cloud_cover",
+    "forecast_shortwave_is_daylight",
+    "weather_forecast_lead_hours",
+    "weather_forecast_available_at_utc",
+    "pv_power_mean_w",
+    "pv_energy_kwh",
+    "target_available_at_utc",
+    "pv_quality_status",
+    "pv_source_profile",
+    "site_id",
+    "pv_timezone_assumption",
+    "site_id_1a",
+    "site_id_2a",
+    "site_id_2b"
+  ],
+  "data_sha256": "1e0f4f397cb4f64a4e1033f7bc947f0f1da7250abdd5bcb2241cd7673d56ef79"
+}

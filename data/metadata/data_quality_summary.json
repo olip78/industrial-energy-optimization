@@ -1,0 +1,105 @@
+{
+  "pv": {
+    "rows": 70176,
+    "first_source_time": "2024-01-01 00:00:00",
+    "last_source_time": "2025-12-31 23:45:00",
+    "source_timezone": "unknown; source timestamps must not be joined to UTC weather or prices without an explicit assumption",
+    "profiles": {
+      "1a": {
+        "nulls": 0,
+        "min_w": 0.0,
+        "max_w": 533.6133333333333,
+        "all_zero_days": 3,
+        "last_positive_source_time": "2025-12-31 16:30:00"
+      },
+      "1b": {
+        "nulls": 0,
+        "min_w": 0.0,
+        "max_w": 705.4966666666666,
+        "all_zero_days": 147,
+        "last_positive_source_time": "2025-12-31 23:45:00"
+      },
+      "2a": {
+        "nulls": 0,
+        "min_w": 0.0,
+        "max_w": 604.3666666666667,
+        "all_zero_days": 3,
+        "last_positive_source_time": "2025-12-31 23:45:00"
+      },
+      "2b": {
+        "nulls": 0,
+        "min_w": 0.0,
+        "max_w": 437.0466666666666,
+        "all_zero_days": 3,
+        "last_positive_source_time": "2025-12-31 16:30:00"
+      },
+      "1c": {
+        "nulls": 0,
+        "min_w": 0.0,
+        "max_w": 600.77,
+        "all_zero_days": 313,
+        "last_positive_source_time": "2025-02-25 16:45:00"
+      }
+    },
+    "common_all_zero_days_for_1a_2a_2b": [
+      "2024-05-10",
+      "2024-07-07",
+      "2025-07-23"
+    ]
+  },
+  "actual_weather_era5": {
+    "rows": 17544,
+    "first_timestamp": "2024-01-01 00:00:00+00:00",
+    "last_timestamp": "2025-12-31 23:00:00+00:00",
+    "duplicate_timestamps": 0,
+    "missing_by_column": {
+      "valid_time_utc": 0,
+      "temperature_2m": 0,
+      "shortwave_radiation": 0,
+      "direct_radiation": 0,
+      "diffuse_radiation": 0,
+      "wind_speed_10m": 0,
+      "cloud_cover": 0
+    }
+  },
+  "forecast_weather_icon_previous_runs": {
+    "rows": 17544,
+    "first_timestamp": "2024-01-01 00:00:00+00:00",
+    "last_timestamp": "2025-12-31 23:00:00+00:00",
+    "duplicate_timestamps": 0,
+    "missing_by_column": {
+      "valid_time_utc": 0,
+      "temperature_2m_previous_day1": 444,
+      "temperature_2m_previous_day2": 468,
+      "shortwave_radiation_previous_day1": 444,
+      "shortwave_radiation_previous_day2": 468,
+      "direct_radiation_previous_day1": 444,
+      "direct_radiation_previous_day2": 468,
+      "diffuse_radiation_previous_day1": 444,
+      "diffuse_radiation_previous_day2": 468,
+      "wind_speed_10m_previous_day1": 444,
+      "wind_speed_10m_previous_day2": 468,
+      "cloud_cover_previous_day1": 444,
+      "cloud_cover_previous_day2": 468
+    }
+  },
+  "day_ahead_prices_de_lu": {
+    "rows": 24171,
+    "first_timestamp": "2023-12-31 23:00:00+00:00",
+    "last_timestamp": "2025-12-31 22:45:00+00:00",
+    "duplicate_timestamps": 0,
+    "missing_by_column": {
+      "valid_time_utc": 0,
+      "day_ahead_price_eur_per_mwh": 0
+    },
+    "interval_step_seconds": {
+      "3600": 15335,
+      "900": 8835
+    }
+  },
+  "common_hourly_utc_coverage": {
+    "hours": 17543,
+    "first": "2024-01-01T00:00:00Z",
+    "last": "2025-12-31T22:00:00Z"
+  }
+}

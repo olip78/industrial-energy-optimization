@@ -1,0 +1,102 @@
+{
+  "provider": "Open-Meteo Single Runs API",
+  "endpoint": "https://single-runs-api.open-meteo.com/v1/forecast",
+  "model": "ECMWF IFS HRES via ecmwf_ifs",
+  "locations": [
+    {
+      "location_id": "north_sea_offshore",
+      "latitude": 54.4,
+      "longitude": 7.7,
+      "role": "offshore_wind",
+      "cell_selection": "sea"
+    },
+    {
+      "location_id": "schleswig_holstein",
+      "latitude": 54.2,
+      "longitude": 9.7,
+      "role": "northern_onshore_wind",
+      "cell_selection": "land"
+    },
+    {
+      "location_id": "lower_saxony",
+      "latitude": 52.7,
+      "longitude": 8.4,
+      "role": "northwest_onshore_wind",
+      "cell_selection": "land"
+    },
+    {
+      "location_id": "mecklenburg",
+      "latitude": 53.7,
+      "longitude": 12.6,
+      "role": "northeast_wind",
+      "cell_selection": "land"
+    },
+    {
+      "location_id": "ruhr_west",
+      "latitude": 51.5,
+      "longitude": 7.1,
+      "role": "western_load_and_weather",
+      "cell_selection": "land"
+    },
+    {
+      "location_id": "central_germany",
+      "latitude": 50.6,
+      "longitude": 9.2,
+      "role": "central_weather",
+      "cell_selection": "land"
+    },
+    {
+      "location_id": "brandenburg",
+      "latitude": 52.4,
+      "longitude": 13.8,
+      "role": "eastern_wind_and_solar",
+      "cell_selection": "land"
+    },
+    {
+      "location_id": "saxony",
+      "latitude": 51.1,
+      "longitude": 13.7,
+      "role": "southeastern_weather",
+      "cell_selection": "land"
+    },
+    {
+      "location_id": "bavaria",
+      "latitude": 48.8,
+      "longitude": 11.6,
+      "role": "southern_solar_and_load",
+      "cell_selection": "land"
+    },
+    {
+      "location_id": "pforzheim_proxy",
+      "latitude": 48.89,
+      "longitude": 8.7,
+      "role": "existing_pv_weather_proxy",
+      "cell_selection": "land"
+    }
+  ],
+  "variables": [
+    "temperature_2m",
+    "shortwave_radiation",
+    "direct_radiation",
+    "diffuse_radiation",
+    "wind_speed_120m",
+    "cloud_cover"
+  ],
+  "availability_contract": "run_init_utc + 6 hours <= intraday_price as_of_utc",
+  "raw_directory": "data/raw/weather_forecasts_ecmwf_ifs_spatial_single_runs",
+  "processed_path": "data/processed/weather_forecast_hourly_ecmwf_ifs_spatial_single_runs.parquet",
+  "available_runs": 1377,
+  "unavailable_runs": 8,
+  "locations_count": 10,
+  "hourly_rows": 660960,
+  "null_values": {
+    "weather_forecast_temperature_2m": 2880,
+    "weather_forecast_shortwave_radiation": 17060,
+    "weather_forecast_direct_radiation": 15650,
+    "weather_forecast_diffuse_radiation": 18470,
+    "weather_forecast_wind_speed_120m": 4320,
+    "weather_forecast_cloud_cover": 1920
+  },
+  "first_run_init_utc": "2024-03-14T00:00:00+00:00",
+  "last_run_init_utc": "2025-09-30T18:00:00+00:00"
+}

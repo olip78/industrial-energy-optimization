@@ -1,0 +1,42 @@
+# Operating-system and editor state
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Python build and test state
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+__pycache__/
+*.py[cod]
+.venv/
+build/
+dist/
+*.egg-info/
+
+# Notebook and model-training scratch output
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+catboost_info/
+**/catboost_info/
+
+# Local credentials and service state
+.env
+mlartifacts/
+mlruns/
+mlflow/
+mlflow.db
+
+# Downloaded, materialized and feature data. Small provenance manifests under
+# data/metadata remain versioned; source licences are explicitly retained.
+data/raw/*
+!data/raw/mpvbench_license.txt
+!data/raw/mpvbench_01a_metadata.md
+data/processed/
+data/curated/
+data/features/
+
+# Reproducible experiment outputs. Final report figures under docs/assets are
+# versioned separately.
+artifacts/

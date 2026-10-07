@@ -1,0 +1,25 @@
+{
+  "provider": "Open-Meteo Single Runs API",
+  "endpoint": "https://single-runs-api.open-meteo.com/v1/forecast",
+  "model": "ECMWF IFS HRES via ecmwf_ifs",
+  "location": {
+    "latitude": 48.89,
+    "longitude": 8.7
+  },
+  "variables": [
+    "temperature_2m",
+    "shortwave_radiation",
+    "direct_radiation",
+    "diffuse_radiation",
+    "wind_speed_10m",
+    "cloud_cover"
+  ],
+  "availability_contract": "run_init_utc + 6 hours <= MPC as_of_utc",
+  "raw_directory": "data/raw/weather_forecasts_ecmwf_ifs_single_runs",
+  "processed_path": "data/processed/weather_forecast_hourly_ecmwf_ifs_single_runs.parquet",
+  "available_runs": 1377,
+  "unavailable_runs": 8,
+  "hourly_rows": 66096,
+  "first_run_init_utc": "2024-03-14T00:00:00+00:00",
+  "last_run_init_utc": "2025-09-30T18:00:00+00:00"
+}
