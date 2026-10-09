@@ -60,7 +60,7 @@ flowchart LR
 ```
 
 The physical reference case uses a 200 kWh flexible daily production target,
-a 06:00--22:00 operating window, a 10 kWp PV proxy and a 44.16 kWh usable
+a 06:00-22:00 operating window, a 10 kWp PV proxy and a 44.16 kWh usable
 battery. The optimizer models battery state of charge, charge/discharge
 efficiency, degradation, curtailment, grid import tariffs, terminal value and
 mutually exclusive operating modes.
@@ -87,8 +87,8 @@ data/metadata/      small provenance and quality manifests
 docs/               report, architecture and current experiment documentation
 scripts/            data collection and audit entry points
 src/energy/data/    point-in-time data contracts and dataset builders
-src/energy/training forecast training and frozen evaluation applications
-src/energy/uncertainty/ probabilistic scenario generators
+src/energy/training/     forecast training and frozen evaluation applications
+src/energy/uncertainty/  probabilistic scenario generators
 src/energy/optimization/ physical, market and settlement models
 tests/              unit and contract tests
 ```
