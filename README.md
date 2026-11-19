@@ -25,6 +25,31 @@ The industrial process and market execution are simulated.
 MLflow Tracking and Model Registry, SQLite, Docker Compose, Nginx,
 GitLab CI/CD and Container Registry, Linux/systemd, JavaScript and SVG.
 
+## Methods used
+
+- **Point forecasting:** CatBoost gradient boosting for PV generation and
+  day-ahead prices; direct PV residual correction and intraday price-spread
+  forecasting. Persistence and autoregressive models provide baselines;
+  MIMO MLP and LSTM models were evaluated as trajectory-forecasting experiments.
+- **Probabilistic forecasting:** CatBoost multi-quantile regression and
+  conformalized quantile regression (CQR) for predictive interval calibration.
+- **Joint trajectory simulation:** empirical copula coupling of conditional
+  quantile forecasts using historical rank vectors, preserving dependence
+  across hours and between PV, day-ahead prices and intraday spreads.
+- **Bootstrap scenarios:** joint whole-day residual resampling, including
+  seasonal weighting with a circular calendar kernel and local PV-error scaling.
+- **Optimization and control:** deterministic mixed-integer linear programming
+  (MILP), hourly receding-horizon model-predictive control (MPC), scenario-based
+  sample average approximation (SAA) and experimental mean-CVaR risk penalties.
+- **Simulation and evaluation:** historical-stream operation and out-of-sample
+  economic replay with a shared physical/settlement model; rolling-origin
+  validation, frozen temporal holdout, rule-based and day-ahead Oracle
+  benchmarks, and paired moving-block bootstrap confidence intervals.
+
+These methods cover both the deployed point-forecast/MILP/MPC service and
+research experiments. Quantile/copula scenarios, CQR and mean-CVaR were
+compared in the report; they are not all active in the live service.
+
 ## Economic result
 
 All model choices were developed on 2024 data and frozen before the 2025
@@ -79,20 +104,6 @@ a 06:00-22:00 operating window, a 10 kWp PV proxy and a 44.16 kWh usable
 battery. The optimizer models battery state of charge, charge/discharge
 efficiency, degradation, curtailment, grid import tariffs, terminal value and
 mutually exclusive operating modes.
-
-## Methods implemented
-
-- **Point forecasts:** CatBoost, persistence and autoregressive baselines,
-  direct residual correction and experimental MIMO MLP/LSTM trajectories.
-- **Uncertainty:** whole-day residual bootstrap, multi-quantile regression,
-  empirical copulas, conformal calibration and a circular seasonal kernel.
-- **Decision making:** deterministic MILP, receding-horizon MPC, sample average
-  approximation and mean-CVaR stochastic optimization.
-- **Evaluation:** frozen 2024-to-2025 forecasting tests, a common physical and
-  financial ledger, rule-based and Oracle bounds, paired block-bootstrap
-  confidence intervals and error analysis.
-- **Model lifecycle:** packaged training applications and optional MLflow
-  tracking/Model Registry registration for the deployable forecasting models.
 
 ## Repository layout
 
