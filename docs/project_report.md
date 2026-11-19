@@ -1,9 +1,10 @@
 # Forecasting and Optimization for Industrial Energy Management
 
-> First narrative draft. All reported forecasting and economic results use
-> frozen 2024-to-2025 experiments. The deployment and monitoring section
-> describes the implemented training layer and the intended operating model;
-> it does not claim that a production platform has already been deployed.
+> Updated 19 November 2026. Forecasting and economic results retain the frozen
+> 2024-to-2025 evaluation contract. Section 7 documents the deployed
+> historical-stream ML service, dashboard and verified GitLab CI/CD workflow.
+> The service simulates industrial operation; it does not control a real plant
+> or submit electricity-market orders.
 
 ## Executive summary
 
@@ -40,10 +41,13 @@ observed market dynamics, placing flexible load in historically cheaper hours
 and battery discharge in historically expensive hours. It requires no machine
 learning or mathematical optimization and could be implemented in a
 spreadsheet. The **Day-ahead Oracle** is the performance ceiling and cost lower
-bound. It allocates load, PV and battery capacity using factual PV generation
-and factual day-ahead prices that would not be known when a real nomination is
-submitted. The Oracle is still prevented from speculative intraday trading, so
-its advantage comes only from perfect day-ahead information.
+benchmark for the non-speculative day-ahead planning problem. It allocates
+load, PV and battery capacity using factual PV generation and factual
+day-ahead prices that would not be known when a real nomination is submitted.
+It does not know future intraday prices and is prevented from speculative
+intraday trading, so its advantage comes only from perfect day-ahead
+information. It is therefore not a guaranteed pathwise cost minimum once
+forecast-driven policies are settled against realised intraday prices.
 
 The resulting costs and the share of the Rule-to-Oracle opportunity captured
 by each evaluated strategy are presented below.
@@ -457,8 +461,13 @@ $$
 q_h^{DA}=g_h,
 $$
 
-so \(\Delta_h=0\). This defines a useful lower cost bound without giving the
-benchmark an artificial speculative business model.
+so \(\Delta_h=0\). This defines a lower benchmark within the honest,
+non-speculative day-ahead scheduling class without giving the Oracle an
+artificial trading advantage. It is not a universal pathwise lower bound for
+the realised two-settlement ledger. A forecast-driven policy can occasionally
+finish below the Oracle by chance when its unplanned PV, load or battery
+deviation is settled at a favourable intraday price. That outcome is lucky
+settlement, not superior information or a reproducible speculative strategy.
 
 ## 4. Forecasting and uncertainty models
 
@@ -471,7 +480,7 @@ model search.
 | Day-ahead PV | CatBoost with calendar, solar geometry and archived weather | MAE 26.17 W, RMSE 51.35 W; nMAE 5.32% of 2024 observed peak |
 | Intraday PV | Direct CatBoost residual correction | MAE 16.41 W vs 17.44 W frozen-head baseline on MPC pairs |
 | Day-ahead price | CatBoost with price history, calendar and spatial German weather | MAE 17.43 EUR/MWh, RMSE 27.31 EUR/MWh, daily Spearman 0.912 |
-| Next-hour intraday price | Regularized CatBoost on intraday-minus-day-ahead spread, shrunk 70% | MAE 12.67 vs 12.79 EUR/MWh for the known day-ahead curve |
+| Intraday price | Regularized CatBoost on intraday-minus-day-ahead spread, shrunk 70% for the next hour | All-horizon MAE 12.65 vs 12.78 EUR/MWh for the known day-ahead curve |
 
 ![Frozen forecast overview](assets/report/forecast_overview_2025.png)
 
@@ -524,6 +533,10 @@ delivery hour and retains the day-ahead curve beyond it. The full-horizon MAE
 improves only from approximately 12.8 to 12.6 EUR/MWh; applying the correction
 to every remaining hour is worse. The final design therefore keeps the small,
 stable correction rather than the most elaborate feature set.
+
+![Intraday continuous-average prices against the two causal forecast alternatives. The upper panel shows the next-hour MPC forecast used by the economic replay: the known auction-cleared day-ahead curve plus 70% of the CatBoost spread correction. The lower panel deliberately uses the harder pre-auction day-ahead model forecast. Both panels show trailing seven-day means of daily averages over operating hours 06:00--21:00; metrics use the same 4,176 hourly observations from 261 delivery days. MAE is 11.67 EUR/MWh for the intraday model, 13.46 EUR/MWh for the known day-ahead curve and 23.88 EUR/MWh for the pre-auction day-ahead model. The known clearing curve is the operational MPC baseline.](assets/report/intraday_price_forecast_comparison_2025.png)
+
+\clearpage
 
 ### 4.3 Probabilistic forecasting and scenario generation
 
@@ -617,6 +630,28 @@ next-hour intraday-price correction is also small. MPC still creates material
 value because it repeatedly reallocates the remaining production requirement
 and battery energy after forecast errors have become observable.
 
+![Temporal decomposition of the deterministic economic result over all 261 delivery days. The upper panel is day-ahead-only cost minus Day-ahead Oracle cost; the lower panel is deterministic MPC cost minus day-ahead-only cost. Thin lines are unsmoothed daily values and bold lines are trailing 14-delivery-day means in EUR/day. Both panels use the same symmetric scale and an emphasized zero; the lightly shaded positive half of the lower panel is the MPC loss zone. Full-period totals are EUR 115.41 of day-ahead gap to Oracle and EUR -63.31 of incremental MPC cost effect.](assets/report/day_ahead_gap_and_mpc_effect_2025.png)
+
+The April break is not a deterioration of the intraday-price model: next-hour
+MAE improves from 12.05 to 11.32 EUR/MWh. The upstream change is larger:
+day-ahead-price MAE drops from 27.53 to 17.41 EUR/MWh, the daily
+Day-ahead-to-Oracle gap drops from EUR 0.658 to EUR 0.332, and the MPC effect
+drops from EUR 0.491 to EUR 0.116 per day. In January--March MPC intraday
+settlement is EUR 7.84 worse than Day Ahead, while battery and terminal-recharge
+cost is EUR 87.78 lower, partly offset by EUR 36.72 of additional regulated
+import cost. Early MPC value therefore mainly corrects battery actions induced
+by weak pre-auction forecasts, not next-hour price trading. The result uses the
+hourly intraday continuous-average proxy, not a true imbalance price or
+quarter-hourly execution.
+
+This also explains why the thin daily Day-ahead-to-Oracle line occasionally
+crosses below zero. The Oracle deliberately has zero intraday deviation and
+does not know future intraday prices, whereas a forecast-based policy can make
+an accidental deviation that later receives a favourable realised settlement
+price. The comparison does not allow either policy to create deviations for
+the purpose of price speculation; it measures operational forecast error and
+replanning under the same physical ledger.
+
 ### 6.2 Stochastic day-ahead optimization
 
 Raw joint-residual SAA costs EUR 7,535.12 and saves EUR 12.26 relative to the
@@ -650,36 +685,150 @@ full cycles over the replay, point day-ahead 142.4, deterministic MPC 136.8
 and Oracle 144.2. Degradation and overnight restoration are included, so the
 optimizer does not treat battery energy as free.
 
-## 7. Software and operating model
+## 7. Deployed ML service and operating model
 
-The implementation is a modular Python package rather than a collection of
-model-specific services. Data contracts, feature builders, training
-applications, scenario generators, optimizers and backtests share one codebase
-and one set of units and temporal conventions.
+The modelling and optimization code is deployed as a working ML service on one
+Ubuntu 24.04 x86-64 VM in Yandex Cloud. The public
+[operations dashboard](http://81.26.188.18:8080) and the
+[GitLab project](https://gitlab.com/olip78/energy-optimization) demonstrate the
+complete path from historical inputs to forecasts, decisions, monitoring and
+application deployment. The first end-to-end GitLab deployment was verified on
+19 November 2026.
 
-Implemented components include:
+The code remains a modular Python package: data contracts, feature builders,
+training applications, optimizers and replay share units and temporal
+conventions. Python, CatBoost, pandas/NumPy and SciPy/HiGHS provide forecasting
+and deterministic MILP/MPC. FastAPI/Uvicorn exposes the service; the frontend
+uses HTML, CSS, JavaScript and SVG. Docker Compose, Nginx, SQLite, MLflow,
+GitLab CI/CD, Container Registry and systemd provide the small service platform.
 
-- reproducible historical-data and feature-building commands;
-- packaged training applications for day-ahead PV, MPC PV and intraday price,
-  plus a reproducible day-ahead-price experiment;
-- seasonal week and chronological split utilities;
-- MLflow logging and optional Model Registry version creation;
-- deterministic, MPC, SAA and CVaR decision cores;
-- common replay and settlement ledgers;
-- saved configurations, predictions, feature importance and audit artifacts;
-- automated tests for physical constraints, temporal contracts and scenario
-  generation.
+### 7.1 Historical-stream operation in real time
 
-The intended deployment remains a modular monolith: one application image,
-four independently versioned model artifacts, scheduled batch decisions and a
-small API boundary. ClearML can orchestrate ingestion, feature, training and
-backtest tasks; MLflow remains the source of truth for experiment tracking and
-model versions.
+The service computes fresh model predictions and optimization decisions rather
+than serving saved economic decisions. Four CatBoost estimators form an
+immutable, checksummed release: day-ahead PV, day-ahead price, MPC PV residual
+correction and intraday price spread. Initial service models use 2024 history,
+with the latest 28 days held out for validation and not refitted. This serving
+configuration is versioned separately from the frozen research experiments;
+the economic results reported earlier are not measurements of the live demo.
 
-Serving, Docker packaging, ClearML pipelines, dashboards, alerting and
-automatic champion/fallback switching are still to be implemented. They are
-the appropriate next phase because the modelling and decision contracts are
-now stable enough to monitor.
+March--June 2025 is replayed once to build genuine pseudo-history for monitoring
+and candidate training. The prepared snapshot contains 111 complete delivery
+days in that interval. July--September supplies a repeating operational loop
+of 91 complete days; incomplete source days are quarantined. At the loop
+boundary, virtual time and model state return to the saved July checkpoint,
+so a new cycle does not inherit training from the previous pass through the
+same three months.
+
+One real Berlin operating day maps to one complete historical delivery day.
+The worker checks the clock every 30 seconds and reveals only completed hourly
+intervals: at 07:00, the 06:00--07:00 action is committed. After the final
+interval completes at 22:00, the full day remains visible overnight. At 06:00
+the next historical day opens. The Europe/Berlin zone handles daylight-saving
+changes; a persistent real-date anchor allows sequential catch-up after a
+restart. Catch-up and retraining can temporarily delay progression.
+
+Historical forecast features and observations are gated by their recorded
+availability times. Tomorrow's day-ahead plan is withheld until its inputs
+are available, normally 11:00 in simulation time. The active model release
+produces forecasts, the deterministic optimizer builds the day-ahead plan,
+and MPC commits only its first action before recalculating the remaining
+horizon at the next completed operating hour. The dashboard labels real
+Berlin time separately from the historical simulation time and last settled
+interval. Public visitors cannot change the clock or reset the shared replay.
+
+### 7.2 Single-VM architecture
+
+Docker Compose runs the following components on one local host:
+
+| Component | Responsibility |
+|---|---|
+| Nginx | Public read-only dashboard/API proxy on port 8080; routes to the active API slot |
+| FastAPI blue/green slots | Serve forecasts, decisions and monitoring; readiness verifies inputs and active model artifacts |
+| One replay/training worker | Advance the Berlin-clock replay, execute MPC and schedule biweekly candidate jobs |
+| MLflow | Private experiment tracking, four-model registration and model provenance |
+| Mounted runtime directory | Historical snapshots, immutable releases, SQLite state and monitoring history |
+| systemd maintenance timer | Daily SQLite compaction and old unused Docker image/build-cache cleanup |
+
+Nginx switches between API slots during application deployment. The worker is
+updated separately and remains a single writer. A single-host lock serializes
+state-changing operations; state advances and their audit records commit in
+one SQLite transaction. SQLite WAL and model manifests live on the VM's local
+disk. The public service uses HTTP on the VM IP; MLflow remains bound to
+loopback/internal networking and administrative routes are blocked at the
+public proxy. Credentials and runtime data are excluded from the repository
+and application image.
+
+This implementation uses Docker Compose and systemd. Kubernetes/k3s, ClearML,
+a distributed data platform and separate monitoring servers are not required
+for the deployed demo. Application blue/green deployment is distinct from
+promotion or rollback of a compatible model release.
+
+### 7.3 Model lifecycle and monitoring
+
+Every fourteen virtual calendar days, the worker runs an idempotent candidate
+training job on newly available local historical data and logs the resulting
+four-model release to MLflow. Candidate validation compares forecast MAE with
+the current champion on the same held-out window; a three-day economic replay
+adds a smoke gate. The latter is a short engineering check, not a statistically
+conclusive estimate of economic improvement. Failed candidates leave the
+champion running. Promotion and rollback are explicit day-boundary commands;
+automatic promotion and continuous online shadow inference are future work.
+The worker pauses virtual progression while training runs.
+
+The dashboard has three views:
+
+- **Live Operations:** day-ahead and executed/current MPC load schedules,
+  market/grid position, battery and PV plan-versus-fact charts, current action
+  and operating economics.
+- **Day-Ahead Plan:** tomorrow's production, procurement, PV/price forecasts,
+  battery schedule, expected costs and assumptions once forecast inputs arrive.
+- **Monitoring:** feature completeness and drift, operational forecast MAE,
+  release-validation references, candidate/release history and retrospective
+  day-ahead cost gap to Oracle and incremental MPC cost effect.
+
+Data monitoring checks missing and non-finite features, standardized mean
+shift relative to release training statistics and all-zero PV days. Model
+monitoring uses completed-day forecast MAE and training/validation references.
+The immutable historical-file provider has no independently measured live-feed
+freshness SLA. Decision economics is settled retrospectively, so Oracle
+comparisons are diagnostics unavailable at the original control instant.
+
+Structured JSON logs carry run, decision and release context. Container logs
+rotate, the model cache and thread counts are bounded, and retention keeps
+chart prehistory, the current and previous cycles and a short diagnostic audit
+plus relevant lifecycle events. The enabled systemd timer adds daily database
+compaction and unused-image/cache cleanup. Datasets, model checkpoints and
+containers are preserved. The MLflow background job executor is disabled;
+the ENERGY worker owns training and scheduling.
+
+### 7.4 Verified CI/CD
+
+The [GitLab pipeline](https://gitlab.com/olip78/energy-optimization/-/pipelines)
+runs Python tests and Ruff, checks JavaScript syntax, builds an amd64 Docker
+image and checks API liveness without private datasets. A successful image is
+published to GitLab Container Registry with its commit SHA as the tag.
+
+A manual production job is available on the protected default branch. It uses
+a dedicated SSH key, verifies the VM host key, copies application files while
+preserving server credentials/runtime/active-slot configuration, and pulls the
+SHA-tagged image. It starts the inactive API slot, waits for model-aware
+readiness, validates and reloads Nginx, then updates the sole worker. A GitLab
+resource group serializes deployments. The VM uses a read-only Registry token.
+
+The first verified pipeline passed Python checks, JavaScript checks, image
+build/liveness and production deployment. Nginx switched from blue to green;
+the active four-model release, historical snapshot and operational state were
+preserved. The previous API slot remains available for application rollback,
+and a runtime/configuration backup was taken before this first rollout.
+Failed API readiness leaves the old route active; a failed proxy switch
+restores the original upstream. This does not imply transactional rollback of
+every process: worker-update failures require operator inspection. Schema
+migrations remain a separate operation.
+
+The precise operational commands and scope are documented in the
+[deployment guide](deployment.md), [GitLab setup](gitlab.md) and
+[technical architecture](architecture.md).
 
 ## 8. Limitations
 
@@ -720,10 +869,12 @@ allow the cost of risk aversion to be tested. The experiments also show when
 that sophistication is not useful: CVaR penalties and more elaborate scenario
 models do not automatically improve realised economics.
 
-The modelling phase is sufficiently complete for the next work to focus on
-operability: packaging the decision application, scheduling it, monitoring
-data and model drift, comparing predicted and realised economics, and safely
-switching between champion models and robust fallbacks.
+The workflow is also exercised by a deployed historical-stream ML service:
+fresh forecasts and MPC follow Berlin operating hours, a public dashboard
+exposes operating/monitoring history, and GitLab CI/CD delivers versioned Docker
+images through blue/green application rollouts. Further operational work can
+extend automated model promotion, external data ingestion and alerting beyond
+this deliberately small single-VM demonstration.
 
 ## Supporting project documents
 

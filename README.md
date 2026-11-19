@@ -10,6 +10,19 @@ economic replay. It is designed as a portfolio-grade reference implementation:
 the market chronology, information boundaries, physical constraints and
 settlement ledger are explicit and testable.
 
+**Live ML service:** [Open the dashboard](http://81.26.188.18:8080) ·
+[GitLab repository](https://gitlab.com/olip78/energy-optimization) ·
+[CI/CD pipelines](https://gitlab.com/olip78/energy-optimization/-/pipelines)
+
+The deployed service simulates live operation using historical data. It computes
+fresh forecasts and hourly MPC decisions, follows the real Europe/Berlin clock,
+and displays operating plans, revealed observations and model/data monitoring.
+The industrial process and market execution are simulated.
+
+**Stack:** Python, CatBoost, pandas/NumPy, SciPy/HiGHS MILP, FastAPI/Uvicorn,
+MLflow Tracking and Model Registry, SQLite, Docker Compose, Nginx,
+GitLab CI/CD and Container Registry, Linux/systemd, JavaScript and SVG.
+
 ## Economic result
 
 All model choices were developed on 2024 data and frozen before the 2025
@@ -156,13 +169,53 @@ The project therefore uses an approximate Pforzheim weather coordinate and an
 explicit `Europe/Berlin` timestamp assumption. Read the data quality report
 before replacing or extending any source.
 
-## Current scope of MLOps
+## Deployed ML service and architecture
 
-The repository contains reusable training applications, MLflow configuration,
-registry hooks, deterministic experiment artifacts and a tested Python CLI.
-ClearML orchestration, the online API, containers, deployment manifests and
-production monitoring are architectural targets; they are not presented as
-already deployed components.
+This GitHub repository contains the research/training implementation and report.
+The deployed service, Docker configuration, clock worker and GitLab pipeline
+are maintained in the [service repository](https://gitlab.com/olip78/energy-optimization).
+
+The [live dashboard](http://81.26.188.18:8080) runs on one Ubuntu VM in Yandex
+Cloud. Docker Compose manages a FastAPI decision API, a single replay/training
+worker, a private MLflow server and an Nginx reverse proxy. API blue/green slots
+support application updates. Historical inputs, model artifacts and SQLite
+state are persisted in a host-mounted runtime directory.
+
+```mermaid
+flowchart LR
+    Viewer[Public browser] --> Proxy[Nginx :8080]
+    Proxy --> API[Active FastAPI slot: blue or green]
+    Worker[Berlin-clock replay and training worker] --> State[(SQLite and historical inputs)]
+    API --> State
+    Worker --> Registry[Private MLflow tracking and registry]
+    Worker --> Models[Versioned four-model releases]
+    API --> Models
+    CI[GitLab tests and image build] --> Images[GitLab Container Registry]
+    Images --> Rollout[SSH deployment and readiness checks]
+    Rollout --> API
+```
+
+GitLab CI runs Python tests, lint and JavaScript syntax checks, builds and
+smoke-tests a SHA-tagged image, and publishes it to Container Registry. A manual
+production deployment pulls that image, verifies the inactive API slot, switches
+Nginx and updates the sole worker. The first end-to-end deployment completed on
+19 November 2026. Runtime data, model releases and credentials survive rollouts.
+Application-image rollback and model-release rollback are separate operations.
+
+See [deployment instructions](docs/deployment.md),
+[GitLab setup](docs/gitlab.md) and the [architecture](docs/architecture.md).
+
+The service initially trains four compatible CatBoost models on 2024 data.
+March--June 2025 forms one-time monitoring/retraining history; July--September
+loops from a saved July model checkpoint. Completed intervals follow real
+Europe/Berlin hours, the final day view is held after 22:00, and the next day
+opens at 06:00. Forecasts and MPC are recomputed on each step.
+
+The three-view dashboard exposes Live Operations, Day-Ahead Plan and Monitoring.
+Data checks, operational MAE, candidate releases and settled economics are
+visible. Biweekly candidates are evaluated and registered in MLflow; model
+promotion/rollback is manual. The running demo uses deterministic point forecasts
+and MPC, while the probabilistic/stochastic methods remain research experiments.
 
 ## Documentation
 
@@ -171,8 +224,8 @@ already deployed components.
   modelling experiments and economic conclusions.
 - [Design document](docs/design_document.md) — detailed requirements and
   modelling decisions developed during the project.
-- [Technical architecture](docs/architecture.md) — intended modular-monolith,
-  orchestration and model-registry design.
+- [Technical architecture](docs/architecture.md) — deployed single-VM design and
+  explicitly separated future extensions.
 - [Final deterministic formulation](docs/economic_backtest_v4_final_formulation.md)
   — final battery, tariff, curtailment, Oracle and MPC semantics.
 - [Frozen temporal backtest](docs/temporal_backtest_2025.md) — forecasting
