@@ -6,6 +6,8 @@
 > The service simulates industrial operation; it does not control a real plant
 > or submit electricity-market orders.
 
+Developed in collaboration with **OpenAI Codex**.
+
 ## Executive summary
 
 This project develops a small but complete decision system for an industrial

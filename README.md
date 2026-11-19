@@ -1,5 +1,7 @@
 # Forecasting and Optimization for Industrial Energy Management
 
+Developed in collaboration with **OpenAI Codex**.
+
 An end-to-end data science project for an industrial electricity consumer with
 flexible production load, on-site photovoltaic generation, battery storage and
 access to the German day-ahead and intraday markets.
